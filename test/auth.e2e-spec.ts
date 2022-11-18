@@ -20,7 +20,21 @@ describe('AUTH', () => {
     password: 'password',
   };
 
-  it('should register', async () => {
+  const sellerRegister: RegisterDTO = {
+    username: 'seller',
+    password: 'password',
+    seller: true,
+  };
+
+  const sellerLogin: LoginDTO = {
+    username: 'seller',
+    password: 'password',
+  };
+
+  let userToken: string;
+  let sellerToken: string;
+
+  it('should register user', async () => {
     return request(app)
       .post('/auth/register')
       .set('Accept', 'application/json')
@@ -30,6 +44,21 @@ describe('AUTH', () => {
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
+        expect(body.user.seller).toBeFalsy();
+      })
+      .expect(HttpStatus.CREATED);
+  });
+
+  it('should register seller', () => {
+    return request(app)
+      .post('/auth/register')
+      .set('Accept', 'application/json')
+      .send(sellerRegister)
+      .expect(({ body }) => {
+        expect(body.token).toBeDefined();
+        expect(body.user.username).toEqual('seller');
+        expect(body.user.password).toBeUndefined();
+        expect(body.user.seller).toBeTruthy();
       })
       .expect(HttpStatus.CREATED);
   });
@@ -48,16 +77,40 @@ describe('AUTH', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  it('should login', async () => {
+  it('should login user', async () => {
     return request(app)
       .post('/auth/login')
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
+        userToken = body.token;
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
       })
       .expect(HttpStatus.CREATED);
   });
+
+  it('should login seller', () => {
+    return request(app)
+      .post('/auth/login')
+      .set('Accept', 'application/json')
+      .send(sellerLogin)
+      .expect(({ body }) => {
+        sellerToken = body.token;
+
+        expect(body.token).toBeDefined();
+        expect(body.user.username).toEqual('seller');
+        expect(body.user.password).toBeUndefined();
+        expect(body.user.seller).toBeTruthy();
+      });
+  });
+
+  // it('should respect seller token', () => {
+  //   return request(app)
+  //     .get('/product/mine')
+  //     .set('Accept', 'application/json')
+  //     .set('Authorization', `Bearer ${sellerToken}`)
+  //     .expect(200);
+  // });
 });
