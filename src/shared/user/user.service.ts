@@ -45,6 +45,6 @@ export class UserService {
     return await this.userModel.findOne({ username });
   };
   findAll = async () => {
-    await this.userModel.find();
+    return await this.userModel.find();
   };
 }

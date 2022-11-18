@@ -8,7 +8,9 @@ export class AuthService {
   constructor(private userService: UserService) {}
 
   async signPayload(payload: Payload) {
-    return sign(payload, 'secretKey', { expiresIn: '12h' });
+    return sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY,
+    });
   }
   async validateUser(payload: Payload) {
     return await this.userService.findByPayload(payload);
