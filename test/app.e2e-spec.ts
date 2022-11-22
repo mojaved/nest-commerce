@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import * as request from 'supertest';
 import { app } from './constants';
 

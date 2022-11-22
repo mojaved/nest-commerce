@@ -1,5 +1,4 @@
 import { HttpStatus } from '@nestjs/common';
-import 'dotenv/config';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
 import { LoginDTO, RegisterDTO } from '../src/auth/auth.dto';
@@ -10,8 +9,8 @@ beforeAll(async () => {
   await mongoose.connection.db.dropDatabase();
 });
 
-afterAll(function (done) {
-  return mongoose.disconnect(done);
+afterAll(async () => {
+  await mongoose.disconnect();
 });
 
 describe('AUTH', () => {
@@ -40,7 +39,6 @@ describe('AUTH', () => {
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
-        // console.log(body);
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
@@ -106,11 +104,11 @@ describe('AUTH', () => {
       });
   });
 
-  // it('should respect seller token', () => {
-  //   return request(app)
-  //     .get('/product/mine')
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${sellerToken}`)
-  //     .expect(200);
-  // });
+  it('should respect seller token', () => {
+    return request(app)
+      .get('/product/mine')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${sellerToken}`)
+      .expect(200);
+  });
 });
