@@ -1,5 +1,4 @@
 import { HttpStatus } from '@nestjs/common';
-import axios from 'axios';
 import * as mongoose from 'mongoose';
 import { RegisterDTO } from 'src/auth/auth.dto';
 import { CreateProductDTO } from 'src/product/product.dto';
@@ -107,10 +106,6 @@ describe('PRODUCT', () => {
     return request(app)
       .delete(`/product/${productId}`)
       .set('Authorization', `Bearer ${sellerToken}`)
-      .expect(({ body }) => {
-        console.log(body);
-        // expect(body.id).toEqual(productId);
-      })
       .expect(200);
   });
 
