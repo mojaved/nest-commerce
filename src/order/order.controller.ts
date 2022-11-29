@@ -5,6 +5,7 @@ import { User } from '../utilities/user.decorator';
 import { User as UserDocument } from '../types/user';
 import { OrderService } from './order.service';
 import { CreateOrderDTO } from './order.dto';
+import { BuyerGuard } from 'src/guards/buyer.guard';
 
 @Controller('order')
 export class OrderController {
@@ -17,7 +18,7 @@ export class OrderController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BuyerGuard)
   createOrder(@Body() order: CreateOrderDTO, @User() { id }: UserDocument) {
     return this.orderService.createOrder(order, id);
   }
